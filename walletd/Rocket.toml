@@ -1,0 +1,13 @@
+[global]
+db_path = "zec-wallet-test.db"
+confirmations = 1
+lwd_url = "https://zec.rocks:443"
+notify_tx_url = "http://btcp:9000/zcashlikedaemoncallback/tx?cryptoCode=zec&hash="
+poll_interval = 60
+regtest = false
+
+[debug]
+address = "127.0.0.1"
+
+[release]
+address = "0.0.0.0"

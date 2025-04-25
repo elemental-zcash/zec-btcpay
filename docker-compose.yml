@@ -1,0 +1,52 @@
+services:
+  btcp:
+    image: btcpayserver/btcpayserver:2.1.0
+    environment:
+      BTCPAY_LAUNCHSETTINGS: "false"
+      BTCPAY_BIND: "0.0.0.0"
+      BTCPAY_PORT: "9000"
+      BTCPAY_HttpsUseDefaultCertificate: "false"
+      BTCPAY_BUNDLEJSCSS: "false"
+      BTCPAY_ALLOW-ADMIN-REGISTRATION: "false"
+      BTCPAY_DISABLE-REGISTRATION: "true"
+      ASPNETCORE_ENVIRONMENT: "production"
+      BTCPAY_POSTGRES: "User ID=postgres;Host=postgres;Port=5432;Database=btcpayserver"
+      BTCPAY_DOCKERDEPLOYMENT: "true"
+      BTCPAY_ZEC_DAEMON_URI: "http://wallet:8000"
+      BTCPAY_ZEC_WALLET_DAEMON_URI: "http://wallet:8000"
+      BTCPAY_ZEC_WALLET_DAEMON_WALLETDIR: "/"
+    links:
+      - postgres
+    ports:
+      - "9000:9000"
+    expose:
+      - "9000"
+    volumes:
+    - "./datadir:/datadir"
+  wallet:
+    image: 1337bytes/zcash-walletd:v0.0.1
+    environment:
+      VK: VIEWING_KEY_HERE
+      LWD_URL: https://zec.rocks:443
+      BIRTH_HEIGHT: 2793100
+      CONFIRMATIONS: 6
+      NOTIFY_TX_URL: http://btcp:9000/zcashlikedaemoncallback/tx?cryptoCode=zec&hash=
+    ports:
+      - "8001:8000"
+    volumes:
+    - "./wallet_datadir:/data"
+    - "./walletd/Rocket.toml:/root/Rocket.toml"
+    links:
+      - btcp
+  postgres:
+    image:  postgres:13.4
+    environment:
+        POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "39372:5432"
+    expose:
+      - "5432"
+volumes:
+  btcpay_datadir:
+  wallet_datadir:
+
